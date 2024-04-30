@@ -1,15 +1,17 @@
-﻿using GeneratedGame.Time;
+﻿using GeneratedGame.Draw;
+using GeneratedGame.Units;
 using GeneratedGame.Window;
-using SFML.Graphics;
-using SFML.System;
 
-IWindow window = new SFMLWindow(new GeneratedGame.Units.Vector2Float(400, 400), "game", 60);
+IWindow window = new SFMLWindow(new Vector2Float(400, 400), "game", 60, Color.BLACK);
 
-CircleShape circle = new CircleShape(50) { Position = new Vector2f(0, 0) };
+var rect = new RenderRect(new Vector2Float(100, 100), new Vector2Float(0, 0), Color.BLUE);
+var rect2 = new RenderRect(new Vector2Float(100, 100), new Vector2Float(100, 0), Color.WHITE);
 
-window.OnFixedUpdate += (window) => circle.Position = new Vector2f(circle.Position.X + 1, circle.Position.Y);
-
-window.OnUpdate += (window) => window.Draw(circle);
+window.OnShow += (window) =>
+{
+    window.Draw(rect);
+    window.Draw(rect2);
+};
 
 while (window.IsOpen)
     window.Update();

@@ -1,19 +1,22 @@
-﻿using SFML.Graphics;
+﻿using GeneratedGame.Draw;
+using SFML.Graphics;
 
 namespace GeneratedGame.Window
 {
-    internal delegate void Update(IWindow window);
-    internal delegate void FixedUpdate(IWindow window);
+    internal delegate void UpdateDelegate();
+    internal delegate void FixedUpdateDelegate();
+    internal delegate void OnShowDelegate(IWindow window);
 
     internal abstract class IWindow
     {
-        public Update OnUpdate;
-        public FixedUpdate OnFixedUpdate;
+        public UpdateDelegate OnUpdate;
+        public FixedUpdateDelegate OnFixedUpdate;
+        public OnShowDelegate OnShow;
 
         public abstract bool IsOpen { get; }
 
         public abstract void Update();
 
-        public abstract void Draw(Drawable drawable);
+        public abstract void Draw(IDrawable drawable);
     }
 }

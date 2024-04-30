@@ -1,4 +1,6 @@
-﻿namespace GeneratedGame.Units
+﻿using SFML.System;
+
+namespace GeneratedGame.Units
 {
     internal class Vector2Float
     {
@@ -17,11 +19,11 @@
             Y = y;
         }
 
-        public Vector2Float(float val)
-        {
-            X = val;
-            Y = val;
-        }
+        public Vector2Float(float val) : this(val, val) {}
+
+        public Vector2Float(Vector2Float copy) : this(copy.X, copy.Y) { }
+
+        public Vector2Float(Vector2f sfmlVec) : this(sfmlVec.X, sfmlVec.Y) { }
 
         public static Vector2Float operator *(Vector2Float a, Vector2Float b) => new Vector2Float(a.X * b.X, a.Y * b.Y);
         public static Vector2Float operator *(Vector2Float a, float b) => new Vector2Float(a.X * b, a.Y * b);
