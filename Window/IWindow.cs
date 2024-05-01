@@ -13,6 +13,8 @@ namespace GeneratedGame.Window
         public FixedUpdateDelegate OnFixedUpdate;
         public OnShowDelegate OnShow;
 
+        public uint FPS = 60;
+
         public abstract bool IsOpen { get; }
 
         public abstract void Update();

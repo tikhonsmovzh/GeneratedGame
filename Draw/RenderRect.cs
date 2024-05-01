@@ -62,14 +62,14 @@ namespace GeneratedGame.Draw
             OutlineThickness = 0;
         }
 
-        public Drawable GetTransformable(float aspect)
+        public Drawable[] GetTransformable(float aspect)
         {
             var shape = new RectangleShape(_shape);
 
             shape.Scale = new SFML.System.Vector2f(_shape.Scale.X * aspect, _shape.Scale.Y);
             shape.Position = new SFML.System.Vector2f(_shape.Position.X * aspect, _shape.Position.Y);
 
-            return shape;
+            return new[] { shape };
         }
     }
 }

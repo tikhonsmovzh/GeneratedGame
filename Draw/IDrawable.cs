@@ -4,6 +4,6 @@ namespace GeneratedGame.Draw
 {
     internal interface IDrawable
     {
-        public Drawable GetTransformable(float aspect);
+        public Drawable[] GetTransformable(float aspect);
     }
 }

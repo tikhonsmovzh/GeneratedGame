@@ -1,6 +1,7 @@
 ﻿using GeneratedGame.Draw;
 using GeneratedGame.Units;
 using SFML.Graphics;
+using SFML.System;
 
 namespace GeneratedGame.Window
 {
@@ -10,10 +11,18 @@ namespace GeneratedGame.Window
 
         public override bool IsOpen => _window.IsOpen;
 
-        public override void Draw(IDrawable dr) => 
-            _window.Draw(dr.GetTransformable((float)_window.Size.Y / _window.Size.X));
+        public override void Draw(IDrawable dr)
+        {
+            var drawables = dr.GetTransformable((float)_window.Size.Y / _window.Size.X);
 
+            foreach(var i in drawables)
+                _window.Draw(i);
+        }
+
+        private uint _fpsCounter = 0;
         private long _lastFrameTime = 0;
+
+        private readonly Clock _fpsClock;
 
         public override void Update()
         {
@@ -29,6 +38,15 @@ namespace GeneratedGame.Window
             }
 
             _window.Clear(new SFML.Graphics.Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B));
+
+            if (_fpsClock.ElapsedTime.AsMilliseconds() / 1000f >= 1f)
+            {
+                FPS = _fpsCounter;
+                _fpsCounter = 0;
+                _fpsClock.Restart();
+            }
+
+            _fpsCounter++;
 
             OnShow?.Invoke(this);
 
@@ -49,6 +67,10 @@ namespace GeneratedGame.Window
             _fixedFps = fixedFps;
 
             BackgroundColor = backgroundColor;
+
+            _fpsClock = new Clock();
+
+            OnFixedUpdate += () => Console.WriteLine(FPS);
         }
     }
 }
