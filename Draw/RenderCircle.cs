@@ -6,7 +6,7 @@ namespace GeneratedGame.Draw
 {
     internal class RenderCircle : IDrawable
     {
-        public Drawable[] GetTransformable(float aspect)
+        public Drawable[] GetDrawable(float aspect)
         {
             var shape = new CircleShape(_shape);
 

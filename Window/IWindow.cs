@@ -9,11 +9,11 @@ namespace GeneratedGame.Window
 
     internal abstract class IWindow
     {
-        public UpdateDelegate OnUpdate;
-        public FixedUpdateDelegate OnFixedUpdate;
-        public OnShowDelegate OnShow;
+        public UpdateDelegate OnUpdate { get; set; }
+        public FixedUpdateDelegate OnFixedUpdate { get; set; }
+        public OnShowDelegate OnShow { get; set; }
 
-        public uint FPS = 60;
+        public abstract uint FPS { get; }
 
         public abstract bool IsOpen { get; }
 

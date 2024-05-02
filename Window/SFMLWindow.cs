@@ -1,7 +1,7 @@
 ﻿using GeneratedGame.Draw;
+using GeneratedGame.Time;
 using GeneratedGame.Units;
 using SFML.Graphics;
-using SFML.System;
 
 namespace GeneratedGame.Window
 {
@@ -13,16 +13,16 @@ namespace GeneratedGame.Window
 
         public override void Draw(IDrawable dr)
         {
-            var drawables = dr.GetTransformable((float)_window.Size.Y / _window.Size.X);
+            var drawables = dr.GetDrawable((float)_window.Size.Y / _window.Size.X);
 
             foreach(var i in drawables)
                 _window.Draw(i);
         }
 
-        private uint _fpsCounter = 0;
-        private long _lastFrameTime = 0;
 
-        private readonly Clock _fpsClock;
+        private readonly ElapsedTime _fixedClock;
+
+        private readonly FPSCounter _fpsCounter;
 
         public override void Update()
         {
@@ -30,47 +30,49 @@ namespace GeneratedGame.Window
 
             OnUpdate?.Invoke();
 
-            if (_lastFrameTime + (long)(1000f / _fixedFps) < Time.Time.GetMillis())
+            if (_fixedClock.Micros > 1000000f / _fixedFps)
             {
-                _lastFrameTime = Time.Time.GetMillis();
+                _fixedClock.Restart();
 
                 OnFixedUpdate?.Invoke();
             }
 
+            _fpsCounter.tick();
+
             _window.Clear(new SFML.Graphics.Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B));
-
-            if (_fpsClock.ElapsedTime.AsMilliseconds() / 1000f >= 1f)
-            {
-                FPS = _fpsCounter;
-                _fpsCounter = 0;
-                _fpsClock.Restart();
-            }
-
-            _fpsCounter++;
 
             OnShow?.Invoke(this);
 
             _window.Display();
         }
 
-        private readonly int _fixedFps;
+        public override uint FPS => _fpsCounter.FPS;
 
+        private readonly int _fixedFps;
 
         public Units.Color BackgroundColor { get; set; }
 
         public SFMLWindow(Vector2Float size, string name, int fixedFps, Units.Color backgroundColor)
         {
             _window = new RenderWindow(new SFML.Window.VideoMode((uint)size.X, (uint)size.Y), name);
+            _window.SetVerticalSyncEnabled(false);
 
-            _window.Closed += (a, b) => _window.Close();
+            _window.Closed += (sender, args) => _window.Close();
+
+            _window.KeyPressed += (sender, args) =>
+            {
+                if (args.Code == SFML.Window.Keyboard.Key.Escape)
+                    _window.Close();
+            };
 
             _fixedFps = fixedFps;
 
             BackgroundColor = backgroundColor;
 
-            _fpsClock = new Clock();
+            _fixedClock = new ElapsedTime();
+            _fpsCounter = new FPSCounter();
 
-            OnFixedUpdate += () => Console.WriteLine(FPS);
+            OnFixedUpdate += () => _window.SetTitle($"{ name } {FPS} fps");
         }
     }
 }

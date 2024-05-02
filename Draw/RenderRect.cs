@@ -62,7 +62,7 @@ namespace GeneratedGame.Draw
             OutlineThickness = 0;
         }
 
-        public Drawable[] GetTransformable(float aspect)
+        public Drawable[] GetDrawable(float aspect)
         {
             var shape = new RectangleShape(_shape);
 
