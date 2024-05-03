@@ -10,18 +10,35 @@ namespace GeneratedGame.Draw
         {
             var shape = new ConvexShape((uint)Points.Length);
 
-            for(var i = 0; i < Points.Length; i++)
+            shape.FillColor = new SFML.Graphics.Color(FillColor.R, FillColor.G, FillColor.B);
+            shape.Position = new SFML.System.Vector2f(Position.X * aspect, Position.Y);
+
+            var outlineShape = new ConvexShape(shape);
+
+            outlineShape.FillColor = new SFML.Graphics.Color(OutlineColor.R, OutlineColor.G, OutlineColor.B);
+
+            bool skipOutline = false;
+
+            for (var i = 0; i < Points.Length; i++)
             {
                 var rot = Angle.ofRadian((float)Math.Atan2(Points[i].Y, Points[i].X)) + Rotation;
                 var lenght = (float)Math.Sqrt(Points[i].X * Points[i].X + Points[i].Y * Points[i].Y);
 
-                shape.SetPoint((uint)i, new SFML.System.Vector2f(Angle.Cos(rot) * lenght * aspect, Angle.Sin(rot) * lenght));
+                outlineShape.SetPoint((uint)i, new SFML.System.Vector2f(Angle.Cos(rot) * lenght * aspect, Angle.Sin(rot) * lenght));
+
+                if (!skipOutline)
+                {
+                    if (lenght > OutlineThickness)
+                        shape.SetPoint((uint)i, new SFML.System.Vector2f(Angle.Cos(rot) * (lenght - OutlineThickness) * aspect, Angle.Sin(rot) * (lenght - OutlineThickness)));
+                    else
+                        skipOutline = true;
+                }
             }
 
-            shape.FillColor = new SFML.Graphics.Color(FillColor.R, FillColor.G, FillColor.B);
-            shape.Position = new SFML.System.Vector2f(Position.X * aspect, Position.Y);
+            if (!skipOutline)
+                return new[] { outlineShape, shape };
 
-            return new[] { shape };
+            return new[] { outlineShape };
         }
 
         public Color FillColor { get; set; }
@@ -34,13 +51,27 @@ namespace GeneratedGame.Draw
 
         public RenderPolygon(Vector2Float[] points, Vector2Float position, Angle rotation, Color fillColor)
         {
+            if (points.Length < 3)
+                throw new Exception($"not to build polygon by {points.Length} points");
+
             FillColor = fillColor;
             Points = points;
             Position = position;
             Rotation = rotation;
 
-            if (points.Length < 3)
-                throw new Exception($"not to build polygon by {points.Length} points");
+            OutlineColor = Color.WHITE;
+            OutlineThickness = 0;
+        }
+
+        public Color OutlineColor { get; set; }
+
+        public float OutlineThickness { get; set; }
+
+        public RenderPolygon(Vector2Float[] points, Vector2Float position, Angle rotation, Color fillColor, Color outlineColor, float outlineThickness) :
+            this(points, position, rotation, fillColor)
+        {
+            OutlineColor = outlineColor;
+            OutlineThickness = outlineThickness;
         }
     }
 }
